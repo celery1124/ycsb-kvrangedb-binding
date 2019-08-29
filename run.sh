@@ -22,7 +22,7 @@ do
 			if [ "$index" == "BASE" ]; then
 				sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
 			else
-				sed -i 's/operationcount=.*/operationcount=10000/' workloads/eval_scan_*
+				sed -i 's/operationcount=.*/operationcount=100000/' workloads/eval_scan_*
 			fi
 			for prefetch in $prefetch_ena
 			do

@@ -35,7 +35,7 @@ workload=com.yahoo.ycsb.workloads.CoreWorkload
 # The number of records in the table to be inserted in
 # the load phase or the number of records already in the 
 # table before the run phase.
-recordcount=1000000
+recordcount=100000000
 
 # There is no default setting for operationcount but it is
 # required to be set.
@@ -53,7 +53,7 @@ insertstart=0
 fieldcount=1
 
 # The size of each field (in bytes)
-fieldlength=256
+fieldlength=64
 
 # Should read all fields
 readallfields=true
@@ -82,7 +82,7 @@ readmodifywriteproportion=0
 scanproportion=1
 
 # On a single scan, the maximum number of records to access
-maxscanlength=1
+maxscanlength=100
 
 # The distribution used to choose the number of records to access on a scan
 scanlengthdistribution=uniform

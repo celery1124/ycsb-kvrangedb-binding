@@ -53,7 +53,7 @@ insertstart=0
 fieldcount=1
 
 # The size of each field (in bytes)
-fieldlength=4000
+fieldlength=32700
 
 # Should read all fields
 readallfields=true
@@ -82,7 +82,7 @@ readmodifywriteproportion=0
 scanproportion=1
 
 # On a single scan, the maximum number of records to access
-maxscanlength=1
+maxscanlength=100
 
 # The distribution used to choose the number of records to access on a scan
 scanlengthdistribution=uniform

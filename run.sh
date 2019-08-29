@@ -8,9 +8,9 @@ result_dir=$home/$2
 mkdir -p $result_dir
 
 threads="1"
-#tests="eval_scan_256 eval_scan_512"
-tests="eval_scan_256 eval_scan_512 eval_scan_1k eval_scan_4k"
-index_type="LSM BTREE BASE"
+#tests="eval_scan_64"
+tests="eval_scan_64 eval_scan_512 eval_scan_4k eval_scan_32k"
+index_type="LSM BTREE BASE INMEM"
 prefetch_ena="TRUE FALSE"
 for exp_id in $( seq 1 $numofexp )
 do
@@ -74,6 +74,8 @@ do
 					rm tmp.txt
 						
 					echo "" >> $result_txt
+
+					rm -rf *.log # clean up files
 				done
 			done
 		done

@@ -8,6 +8,11 @@ result_dir=$home/$2
 mkdir -p $result_dir
 
 threads="1"
+recordcnt='100000000'
+
+sed -i 's/recordcount=.*/recordcount='$recordcnt'/' workloads/eval_scan_*
+exit 0;
+
 #tests="eval_scan_64"
 tests="eval_scan_64 eval_scan_512 eval_scan_4k eval_scan_32k"
 index_type="LSM BTREE BASE INMEM"
@@ -19,11 +24,6 @@ do
 		for index in $index_type
 		do
 			export INDEX_TYPE=$index
-			if [ "$index" == "BASE" ]; then
-				sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
-			else
-				sed -i 's/operationcount=.*/operationcount=100000/' workloads/eval_scan_*
-			fi
 			for prefetch in $prefetch_ena
 			do
 				export PREFETCH_ENA=$prefetch
@@ -52,6 +52,12 @@ do
 					sleep 3
 					# ycsb run scan 100
 					sed -i 's/maxscanlength.*/maxscanlength=100/' workloads/$testfile
+					# num queries 
+					if [ "$index" == "BASE" ]; then
+						sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
+					else
+						sed -i 's/operationcount=.*/operationcount=10000/' workloads/eval_scan_*
+					fi
 
 					./bin/ycsb run kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt  
 					echo "run scan 100" >> $result_txt
@@ -64,6 +70,12 @@ do
 					sleep 3
 					# ycsb run scan 1 (seek)
 					sed -i 's/maxscanlength.*/maxscanlength=1/' workloads/$testfile
+					# num queries 
+					if [ "$index" == "BASE" ]; then
+						sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
+					else
+						sed -i 's/operationcount=.*/operationcount=100000/' workloads/eval_scan_*
+					fi
 
 					./bin/ycsb run kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt  
 					echo "run scan 1" >> $result_txt

@@ -76,49 +76,55 @@ do
 					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 					printf "scan_lat: " >> $result_txt
 					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
-
-					# report io
-					printf "store_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
-					printf "append_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
-					printf "get_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
-					printf "delete_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
-					rm tmp.txt
-
-					sleep 3
-					# ycsb run scan 1 (seek)
-					sed -i 's/maxscanlength.*/maxscanlength=1/' workloads/$testfile
-					# num queries 
-					if [ "$index" == "BASE" ]; then
-						sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
-					else
-						sed -i 's/operationcount=.*/operationcount=100000/' workloads/eval_scan_*
-					fi
-
-					./bin/ycsb run kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt  
-					echo "run scan 1" >> $result_txt
-					printf "run_tp: " >> $result_txt
-					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
-					printf "scan_lat: " >> $result_txt
-					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
-					# report io
-					printf "store_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
-					printf "append_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
-					printf "get_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
-					printf "delete_ios: " >> $result_txt
-					cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
-					rm tmp.txt
-						
+					
 					echo "" >> $result_txt
+					# report io
+					printf "store_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
+					printf "append_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
+					printf "get_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
+					printf "delete_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
+					rm tmp.txt
 
-					rm -rf *.log # clean up files
+					echo "" >> $result_txt
+					sleep 3
+					
 				done
+
+				# ycsb run scan 1 (seek)
+				sed -i 's/maxscanlength.*/maxscanlength=1/' workloads/$testfile
+				# num queries 
+				if [ "$index" == "BASE" ]; then
+					sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
+				else
+					sed -i 's/operationcount=.*/operationcount=100000/' workloads/eval_scan_*
+				fi
+
+				./bin/ycsb run kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt  
+				echo "run scan 1" >> $result_txt
+				printf "run_tp: " >> $result_txt
+				cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
+				printf "scan_lat: " >> $result_txt
+				cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
+
+				echo "" >> $result_txt
+				# report io
+				printf "store_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
+				printf "append_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
+				printf "get_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
+				printf "delete_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
+				rm tmp.txt
+					
+				echo "" >> $result_txt
+
+				rm -rf *.log # clean up files
 			done
 		done
 	done

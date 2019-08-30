@@ -24,7 +24,7 @@ do
 		do
 			export INDEX_TYPE=$index
 
-			result_txt=$result_dir/${testfile}_${index}_${prefetch}_${exp_id}
+			result_txt=$result_dir/${testfile}_${index}_${exp_id}
 			# clean file if existed
 			echo "" > $result_txt
 			for numofthreads in $threads

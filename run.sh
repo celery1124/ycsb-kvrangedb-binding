@@ -8,10 +8,9 @@ result_dir=$home/$2
 mkdir -p $result_dir
 
 threads="1"
-recordcnt='100000000'
+recordcnt='100000'
 
 sed -i 's/recordcount=.*/recordcount='$recordcnt'/' workloads/eval_scan_*
-exit 0;
 
 #tests="eval_scan_64"
 tests="eval_scan_64 eval_scan_512 eval_scan_4k eval_scan_32k"
@@ -24,31 +23,43 @@ do
 		for index in $index_type
 		do
 			export INDEX_TYPE=$index
-			for prefetch in $prefetch_ena
+
+			result_txt=$result_dir/${testfile}_${index}_${prefetch}_${exp_id}
+			# clean file if existed
+			echo "" > $result_txt
+			for numofthreads in $threads
 			do
-				export PREFETCH_ENA=$prefetch
+				echo ===== $numofthreads threads ====== >> $result_txt
+				echo "" >> $result_txt
 
-				result_txt=$result_dir/${testfile}_${index}_${prefetch}_${exp_id}
-				# clean file if existed
-				echo "" > $result_txt
-				for numofthreads in $threads
-				do
-					echo ===== $numofthreads threads ====== >> $result_txt
-					echo "" >> $result_txt
-
-					# format kvssd
-					nvme format /dev/nvme0n1
-					echo "format /dev/nvme0n1 success"
-						
-					# ycsb load
-					./bin/ycsb load kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt 
-					echo $testfile results >> $result_txt
-					echo load >> $result_txt
-					printf "load_tp: " >> $result_txt
-					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
-					printf "load_lat: " >> $result_txt
-					cat tmp.txt|grep AverageLatency|grep INSERT|awk '{print $3}' >> $result_txt
+				# format kvssd
+				nvme format /dev/nvme0n1
+				echo "format /dev/nvme0n1 success"
 					
+				# ycsb load
+				./bin/ycsb load kvrangedb -s -P workloads/$testfile -threads $numofthreads > tmp.txt 
+				echo $testfile results >> $result_txt
+				echo load >> $result_txt
+				printf "load_tp: " >> $result_txt
+				cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
+				printf "load_lat: " >> $result_txt
+				cat tmp.txt|grep AverageLatency|grep INSERT|awk '{print $3}' >> $result_txt
+
+				# report io
+				printf "store_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
+				printf "append_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
+				printf "get_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
+				printf "delete_ios: " >> $result_txt
+				cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
+				
+				for prefetch in $prefetch_ena
+				do
+					export PREFETCH_ENA=$prefetch
+					echo "run with prefetch_ena=$prefetch" >> $result_txt
+
 					sleep 3
 					# ycsb run scan 100
 					sed -i 's/maxscanlength.*/maxscanlength=100/' workloads/$testfile
@@ -65,6 +76,16 @@ do
 					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 					printf "scan_lat: " >> $result_txt
 					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
+
+					# report io
+					printf "store_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
+					printf "append_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
+					printf "get_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
+					printf "delete_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
 					rm tmp.txt
 
 					sleep 3
@@ -83,6 +104,15 @@ do
 					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 					printf "scan_lat: " >> $result_txt
 					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
+					# report io
+					printf "store_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
+					printf "append_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $4} END { print SUM }' >> $result_txt
+					printf "get_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $6} END { print SUM }' >> $result_txt
+					printf "delete_ios: " >> $result_txt
+					cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
 					rm tmp.txt
 						
 					echo "" >> $result_txt

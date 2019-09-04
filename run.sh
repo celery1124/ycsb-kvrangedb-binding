@@ -55,6 +55,11 @@ do
 				printf "delete_ios: " >> $result_txt
 				cat kv_device.log|grep ", get"| awk '{ SUM += $8} END { print SUM }' >> $result_txt
 				
+				# Don't run query on BASE (too slow)
+				if [[ "$index" == "BASE" ]]; then
+					break
+				fi				
+
 				for prefetch in $prefetch_ena
 				do
 					export PREFETCH_ENA=$prefetch

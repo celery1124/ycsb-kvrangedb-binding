@@ -44,6 +44,8 @@ do
 				cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 				printf "load_lat: " >> $result_txt
 				cat tmp.txt|grep AverageLatency|grep INSERT|awk '{print $3}' >> $result_txt
+				printf "load_lat_99th: " >> $result_txt
+				cat tmp.txt|grep AverageLatency|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
 
 				# report io
 				printf "store_ios: " >> $result_txt
@@ -68,6 +70,7 @@ do
 					sleep 3
 					# ycsb run scan 100
 					sed -i 's/maxscanlength.*/maxscanlength=100/' workloads/$testfile
+					sed -i 's/minscanlength.*/minscanlength=100/' workloads/$testfile
 					# num queries 
 					if [ "$index" == "BASE" ]; then
 						sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
@@ -81,6 +84,8 @@ do
 					cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 					printf "scan_lat: " >> $result_txt
 					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
+					printf "scan_lat_99th: " >> $result_txt
+					cat tmp.txt|grep AverageLatency|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
 					
 					echo "" >> $result_txt
 					# report io
@@ -101,6 +106,7 @@ do
 
 				# ycsb run scan 1 (seek)
 				sed -i 's/maxscanlength.*/maxscanlength=1/' workloads/$testfile
+				sed -i 's/minscanlength.*/minscanlength=1/' workloads/$testfile
 				# num queries 
 				if [ "$index" == "BASE" ]; then
 					sed -i 's/operationcount=.*/operationcount=100/' workloads/eval_scan_*
@@ -114,6 +120,8 @@ do
 				cat tmp.txt|grep OVERALL|grep Throughput|awk '{print $3}' >> $result_txt
 				printf "scan_lat: " >> $result_txt
 				cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
+				printf "scan_lat_99th: " >> $result_txt
+				cat tmp.txt|grep AverageLatency|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
 
 				echo "" >> $result_txt
 				# report io

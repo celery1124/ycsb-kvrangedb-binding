@@ -8,7 +8,7 @@ result_dir=$home/$2
 mkdir -p $result_dir
 
 threads="1"
-recordcnt='100000'
+recordcnt='10000000'
 
 sed -i 's/recordcount=.*/recordcount='$recordcnt'/' workloads/eval_scan_*
 
@@ -45,8 +45,8 @@ do
 				printf "load_lat: " >> $result_txt
 				cat tmp.txt|grep AverageLatency|grep INSERT|awk '{print $3}' >> $result_txt
 				printf "load_lat_99th: " >> $result_txt
-				cat tmp.txt|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
-				
+				cat tmp.txt|grep "[INSERT], 99thPercentileLatency(us)," |awk '{print $3}' >> $result_txt
+
 				# report io
 				printf "store_ios: " >> $result_txt
 				cat kv_device.log|grep ", get"| awk '{ SUM += $2} END { print SUM }' >> $result_txt
@@ -85,7 +85,7 @@ do
 					printf "scan_lat: " >> $result_txt
 					cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
 					printf "scan_lat_99th: " >> $result_txt
-					cat tmp.txt|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
+					cat tmp.txt|grep "[SCAN], 99thPercentileLatency(us)," |awk '{print $3}' >> $result_txt
 					
 					echo "" >> $result_txt
 					# report io
@@ -121,7 +121,7 @@ do
 				printf "scan_lat: " >> $result_txt
 				cat tmp.txt|grep AverageLatency|grep SCAN|awk '{print $3}' >> $result_txt
 				printf "scan_lat_99th: " >> $result_txt
-				cat tmp.txt|grep 99thPercentileLatency|awk '{print $3}' >> $result_txt
+				cat tmp.txt|grep "[INSERT], 99thPercentileLatency(us)," |awk '{print $3}' >> $result_txt
 
 				echo "" >> $result_txt
 				# report io

@@ -104,6 +104,7 @@ DATABASES = {
     "solr6"        : "com.yahoo.ycsb.db.solr6.SolrClient",
     "tarantool"    : "com.yahoo.ycsb.db.TarantoolClient",
 		"kvrangedb"		 : "com.yahoo.ycsb.db.KVrangedbClient",
+		"kvleveldb"		 : "com.yahoo.ycsb.db.KVleveldbClient",
 }
 
 OPTIONS = {
